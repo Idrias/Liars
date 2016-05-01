@@ -1,0 +1,34 @@
+void setup() {
+  size(1000, 600);
+  rectMode(RADIUS);
+  textAlign(CENTER, CENTER);
+  setup_vars();
+
+  //client = new Client(this, "25.6.15.118", 6878); // DEV!!
+  //game.stage++; // DEV!!
+  //prescreen.playername.content = "Idrias"; // DEV
+}
+
+
+void draw() {
+  if (game.stage==0) {
+    pregame();
+  } else {
+    network.pull();
+    game.stateCheck();
+    game.checkclick();
+    game.board.draw();
+  }
+}
+
+
+/*
+  STAGES:
+ 0 - menu
+ 1 - trying to connect
+ 2 - connected, server is in waiting phase
+ 3 - playing
+ 4 - results 
+ */
+
+// todo: wenn client leavt während er dran ist, spiel soll weitergehen
