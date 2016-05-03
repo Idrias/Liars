@@ -3,7 +3,7 @@ static String CLIENT_VERSION = "0.9.5";
 //
 
 void setup() {
-  size(960, 540);
+  size(1000, 600);
   //fullScreen();
   rectMode(RADIUS);
   textAlign(CENTER, CENTER);

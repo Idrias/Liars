@@ -1030,7 +1030,7 @@ public void keyPressed() {
     } else if (target!=null) target.content += key;
   }
 }
-  public void settings() {  size(960, 540); }
+  public void settings() {  size(1000, 600); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "liars_client" };
     if (passedArgs != null) {
