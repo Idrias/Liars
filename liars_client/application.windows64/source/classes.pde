@@ -24,8 +24,10 @@ class Game {
     if (mousePressed) {
       if (!got_clicked) {
         got_clicked = true;
-
-        if (board.four_available && !board.four_available_kind.equals("dame") && board.remove_four.checkclick()) {
+        
+        if(board.button_sort.checkclick()) board.sort();
+        
+        if (board.four_available && !board.four_available_kind.equals("dame") && board.button_remove_four.checkclick()) {
           network.push("-dl4", board.four_available_kind, "");
           for (int i=0; i<board.sta_player.size(); i++) {
             if (board.sta_player.get(i).id.equals(board.four_available_kind)) {
@@ -60,7 +62,7 @@ class Game {
                     String farbe = subject.farbe;
                     String id = subject.id;
 
-                    if (game.firstTurn) network.push("+paa", par.playas, "");
+                    if (game.firstTurn) {network.push("+paa", par.playas, ""); game.firstTurn=false;}
                     network.push("+gst", farbe, id);
                     board.sta_player.remove(board.sta_player.get(i));
                     i = -1;
@@ -110,6 +112,7 @@ class Game {
     }
 
     if (!gotOne) board.button_accept.state = false;
+    if(board.four_available) board.button_remove_four.state = true; else board.button_remove_four.state = false;
   }
 }
 
@@ -120,7 +123,9 @@ class Game {
 class Board {
   Button button_accept;
   Button button_lie;
-  Button remove_four;
+  Button button_remove_four;
+  Button button_sort;
+  
   ArrayList<Card> sta_player;
   ArrayList<Card> sta_game;
 
@@ -132,9 +137,11 @@ class Board {
 
 
   Board() {
-    button_accept = new Button(8.25*width/10, 5.55*height/6, width/25, height/30, "Legen", true);
-    button_lie = new Button(9.25*width/10, 5.55*height/6, width/25, height/30, "Lüge", false);
-    remove_four = new Button(550*width/1000-307*height/1200, 320*height/600-34*height/600, width/5, height/30, "Vier der gleichen Sorte ablegen", true);
+    button_accept = new Button(8.25*width/10, 5.32*height/6, width/30, height/36, "Legen", true);
+    button_lie = new Button(9.25*width/10, 5.32*height/6, width/30, height/36, "Lüge", false);
+    
+    button_sort = new Button(8.25*width/10, 5.73*height/6, width/30, height/36, "Sortieren", true);
+    button_remove_four = new Button(9.25*width/10, 5.73*height/6, width/30, height/36, "4 Ablegen", false);
 
     sta_player = new ArrayList<Card>();
     sta_game = new ArrayList<Card>();
@@ -150,7 +157,7 @@ class Board {
   }
 
 
-  void draw() {
+  void draw() { 
     // Draw wooden background and lines
     image(pi_board, 0, 0);
     strokeWeight(5);
@@ -162,7 +169,9 @@ class Board {
     // Draw buttons
     button_accept.draw();
     button_lie.draw();
-    if (four_available && !four_available_kind.equals("dame")) {remove_four.text = "Vier der gleichen Sorte ablegen: " + four_available_kind.substring(0, 1).toUpperCase()+four_available_kind.substring(1, four_available_kind.length()); remove_four.draw();}
+    button_sort.draw();
+    button_remove_four.draw();
+    //if (four_available && !four_available_kind.equals("dame")) {remove_four.text = "Vier der gleichen Sorte ablegen: " + four_available_kind.substring(0, 1).toUpperCase()+four_available_kind.substring(1, four_available_kind.length()); remove_four.draw();}
 
     // Draw cards
     int numberOfCards;
@@ -220,7 +229,7 @@ class Board {
     if (game.myTurn) {
       textSize(15);
       fill(255, 0, 255);
-      text("It's your turn!", 828, 517);
+      text("It's your turn!", 828*1000/width, 475*600/height);
       textSize(11);
     }
 
@@ -295,6 +304,25 @@ class Board {
       four_available_kind = "none";
     }
   }
+  
+  void sort() {
+    ArrayList<Card> sta_sort = new ArrayList<Card>();
+    sta_sort  = sta_player;
+    sta_player = new ArrayList<Card>();
+
+    for(float value = 7; value < 15; value+=0.1) {
+      for(int i=0; i<sta_sort.size(); i++) {
+        Card card = sta_sort.get(i);
+        if(card.value <= value) {
+          sta_player.add(card);
+          sta_sort.remove(card);
+          i=0;
+        }
+      }
+    } 
+    sta_sort = new ArrayList<Card>();
+    for(Card card : sta_player) {sta_sort.add(card);}
+  }
 }
 
 
@@ -307,20 +335,45 @@ class Card {
   PImage kartenbild;
   PImage kartenbildB;
   color selectedcol;
+  color freshcol;
   float lastx, lasty;
+  float value;
   boolean highlighted = false;
   boolean hidden;
+  int birthtime;
 
 
   Card(String p_farbe, String p_id, boolean p_hidden) {
     farbe = p_farbe;
     id = p_id;
     hidden = p_hidden;
+    value = determineValue();
     kartenbild = getImage();
     selectedcol = color(#14FF00);
+    freshcol = color(#FAD412);
+    birthtime = millis();
   }
 
-
+  float determineValue() {
+    float value = 0;
+    
+    if(farbe.equals("herz")) value+=0.1;
+    else if(farbe.equals("karo")) value+=0.2;
+    else if(farbe.equals("kreuz")) value+=0.3;
+    else if(farbe.equals("pik")) value+=0.4;
+    
+    if(id.equals("7")) value+=7;
+    else if(id.equals("8")) value+=8;
+    else if(id.equals("9")) value+=9;
+    else if(id.equals("10")) value+=10;
+    else if(id.equals("bube")) value+=11;
+    else if(id.equals("dame")) value+=12;
+    else if(id.equals("könig")) value+=13;
+    else if(id.equals("ass")) value+=14;
+    
+    return value;
+  }
+  
   PImage getImage() {
     String reference = farbe+id;
     PImage image = new PImage();
@@ -354,8 +407,9 @@ class Card {
     lastx = xpos;
     lasty = ypos;
 
-    if (highlighted) {
-      stroke(selectedcol);
+    if (highlighted || (millis()-birthtime < 1500 && !farbe.equals("mutated") && !hidden)) {
+      if(highlighted) stroke(selectedcol);
+      else stroke(freshcol);
       strokeWeight(3);
       noFill();
       rectMode(CORNERS);

@@ -86,7 +86,7 @@ class Network {
     else if (command.equals("+paa"))                                              game.board.playingas = tag1;
     else if (command.equals("+tsc"))                                              {Card card = new Card(tag1, tag2, true); for(int i=0; i<game.board.sta_game.size(); i++) {if(game.board.sta_game.get(i).farbe.equals(tag1) && game.board.sta_game.get(i).id.equals(tag2)) {game.board.sta_game.remove(i); i=-1;}} card.hidden=false; game.board.sta_game.add(card);}
     else if (command.equals("+con"))                                              {game.board.playingas="null";}  
-    else if (command.equals("+res") && tag1.equals("ALL") && tag2.equals("ALL"))  {String id = game.playerid; game = new Game(); game.playerid = id;}
+    else if (command.equals("+res") && tag1.equals("ALL") && tag2.equals("ALL"))  {println("here"); String id = game.playerid; game = new Game(); game.playerid = id;}
     else if (command.equals("+fre") && tag1.equals("+"))                          {game.board.load_background("fnaf.jpg");}
     else if (command.equals("+fre") && tag1.equals("-"))                          {game.board.load_background("board.jpg");}
     else if (command.equals("+npi") && tag1.equals(game.playerid))                {game.playerid = tag2;}

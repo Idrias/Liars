@@ -16,10 +16,12 @@ import java.io.IOException;
 
 public class liars_server extends PApplet {
 
-static String SERVER_VERSION = "0.9.3";
+static String SERVER_VERSION = "0.9.4";
 
-// TODO IMPLEMENT "DONE"!
-// Server crasht wenn nachfolgende ID nicht mehr da ist
+// TODO IMPLEMENT "DONE" as player var!
+// Server crasht wenn nachfolgende ID nicht mehr da ist |FIXED!
+// First player skip: nachfolgender kann nicht als auslegen |Workaround
+// recommendation: sort cards  
 
 public void setup() {
   server = new Server(this, 6878);
@@ -29,6 +31,12 @@ public void setup() {
 
 
 public void draw() {
+  for(String name : toDisconnect) {
+    for(int i=0; i<players.size(); i++) {
+      if(name.equals(players.get(i).id)) {server.disconnect(players.get(i).client); toDisconnect=new ArrayList<String>();}
+    }
+  }
+  
   checkMouse();
   drawinfo();
   if        (STATE == 0)   waitstate();
@@ -48,10 +56,12 @@ public void checkMouse() {
      if(giveturn.checkclick()) {maketurnflag=true;}
      
      for (Player player : players) {
+       println("checking", player.alias);
        if(maketurnflag && player.entryselected) {
          player.theirturn=true;
+         server.write("+eot<><>;");
          server.write("+msg<"+player.alias+" ist jetzt am Zug!><>;");
-         server.write("+npt<"+player.id+"><>;");
+         server.write("+dsp<"+player.id+"><>;");
          println("ACHTUNG SERVER ADMIN HAT SPIEL MANUPULIERT");
        }
        else if(maketurnflag && !player.entryselected) {
@@ -59,7 +69,8 @@ public void checkMouse() {
        }
        
        else if(kickflag && player.entryselected) {
-         server.disconnect(player.client);
+         println("Disconnecting", player.alias);
+         toDisconnect.add(player.id);
        }
      } 
      
@@ -149,6 +160,10 @@ public void drawinfo() {
     
     yoffset+=14;
   }
+  
+   if(STATE==0) text("Waiting", 10, height-10);
+   else if(STATE==1) text("Playing", 10, height-10);
+   else text("Done", 10, height-10);
 }
 
 public void getplayerturn() {
@@ -261,35 +276,30 @@ public void serverEvent(Server theServer, Client theClient) {
 
 
 public void disconnectEvent(Client theClient) {
-  for (int i=0; i<players.size(); i++) {
-    if (players.get(i).client == theClient) {
-      println("WE LOST PLAYER " + players.get(i).id); 
-      
-      for(Server_Card card : players.get(i).cards) {
-        sta_game.add(card);
-        storedmsgs.add("+gst<"+(card.farbe)+"><"+(card.id)+">;");
+   for(int i = 0; i<players.size(); i++) {
+     Player player = players.get(i);
+     if(player.client == theClient) {
+       players.remove(player);
+       storedmsgs.add("+msg<"+players.get(i).alias+">< left the server!>;");
+     
+       for(Server_Card card : players.get(i).cards) {
+         sta_game.add(card);
+         storedmsgs.add("+gst<"+(card.farbe)+"><"+(card.id)+">;");
+       } 
+       
+       
+        int awaitednum = 1;
+        for(Player player2 : players) {
+          if(PApplet.parseInt(player2.id) != awaitednum) {
+        String newid = ""+awaitednum;
+        if(awaitednum<10) newid = "0"+newid;
+        server.write("+npi<"+player2.id+"><"+newid+">;");
+        player2.id = newid;
       }
-      
-      server.write("+msg<"+players.get(i).alias+">< left the server!>;");
-      
-      if(players.get(i).theirturn) {
-      }
-      
-      players.remove(players.get(i));
+      awaitednum++;
     }
-  }
-  
-  int awaitednum = 1;
-  for(Player player : players) {
-    if(PApplet.parseInt(player.id) != awaitednum) {
-      String newid = ""+awaitednum;
-      if(awaitednum<10) newid = "0"+newid;
-      server.write("+npi<"+player.id+"><"+newid+">;");
-      player.id = newid;
-    }
-    awaitednum++;
-  }
-
+     }
+   }
 }
 public void waitstate() {
   gameStarted = false;
@@ -373,7 +383,23 @@ public void play() {
     server.write(msg);
   storedmsgs = new ArrayList<String>();
   recv();
-
+  
+  if(frameCount%240 == 0 && players.size() > 1) {
+    for(Player player : players) {
+      int damencount = 0;
+      for(Server_Card card : player.cards) {
+        if(card.id.equals("dame")) damencount++;
+      }
+      if(damencount==4 && players.size()>0) {
+        STATE = 0;
+        reset_vars();
+        server.write("+msg<Das Spiel wurde automatisch beendet:><>;");
+        server.write("+msg<"+player.alias+">< hatte vier Damen!>;");
+        server.write("+msg< ><>;");
+        return;
+      }
+    }
+  }
 
   if (!gameStarted) {
     gameStarted = true;
@@ -399,6 +425,7 @@ ArrayList<Player> players;
 ArrayList<Server_Card> sta_game;
 ArrayList<Server_Card> lastcards;
 ArrayList<String> storedmsgs; 
+ArrayList<String> toDisconnect;
 
 Button giveturn;
 Button kick;
@@ -411,6 +438,7 @@ boolean newPlayerFlag = false;
 boolean lied = false;
 boolean freddy = false;
 boolean gotMousePress = false;
+
 String whoseturn = "-1";
 String playingas = "none";
 String winner = "nowinner";
@@ -418,11 +446,13 @@ String appendix = "";
 int gamestarttime = 0;
 int continueschedule = 0;
 
+
 public void reset_vars() {
- for(Player player : players) player.cards = new ArrayList<Server_Card>();
+ for(Player player : players) {player.cards = new ArrayList<Server_Card>(); player.theirturn=false;}
  sta_game = new ArrayList<Server_Card>();
  lastcards = new ArrayList<Server_Card>();
  storedmsgs = new ArrayList<String>();
+ toDisconnect = new ArrayList<String>();
  lastplayer = null;
  gameStarted = false;
  newPlayerFlag = false;
@@ -443,7 +473,7 @@ public void setup_vars() {
   sta_game = new ArrayList<Server_Card>();
   lastcards = new ArrayList<Server_Card>();
   storedmsgs = new ArrayList<String>();
-
+  toDisconnect = new ArrayList<String>();
   giveturn = new Button(width-240, height-75, 100, 25, "Give turn", false);
   kick = new Button(width-240, height-40, 100, 25, "Kick player", false);
 }
@@ -592,7 +622,7 @@ public void get_tags(String msg, String command) {
     if (msg.charAt(i) == '<') open1 = i;
     else if (msg.charAt(i) == '>') close1 = i;
 
-    if (open1 != 0 && close1 != 0) {
+    if (open1 > 0 && close1 > 0) { //?!
       tag1 = msg.substring(open1+1, close1);
       tag2 = msg.substring(close1+2, msg.length()-1);
       break;

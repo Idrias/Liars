@@ -17,7 +17,7 @@ import java.io.IOException;
 public class liars_client extends PApplet {
 
 //
-static String CLIENT_VERSION = "0.9.3";
+static String CLIENT_VERSION = "0.9.4";
 //
 
 public void setup() {
@@ -81,8 +81,10 @@ class Game {
     if (mousePressed) {
       if (!got_clicked) {
         got_clicked = true;
-
-        if (board.four_available && !board.four_available_kind.equals("dame") && board.remove_four.checkclick()) {
+        
+        if(board.button_sort.checkclick()) board.sort();
+        
+        if (board.four_available && !board.four_available_kind.equals("dame") && board.button_remove_four.checkclick()) {
           network.push("-dl4", board.four_available_kind, "");
           for (int i=0; i<board.sta_player.size(); i++) {
             if (board.sta_player.get(i).id.equals(board.four_available_kind)) {
@@ -117,7 +119,7 @@ class Game {
                     String farbe = subject.farbe;
                     String id = subject.id;
 
-                    if (game.firstTurn) network.push("+paa", par.playas, "");
+                    if (game.firstTurn) {network.push("+paa", par.playas, ""); game.firstTurn=false;}
                     network.push("+gst", farbe, id);
                     board.sta_player.remove(board.sta_player.get(i));
                     i = -1;
@@ -167,6 +169,7 @@ class Game {
     }
 
     if (!gotOne) board.button_accept.state = false;
+    if(board.four_available) board.button_remove_four.state = true; else board.button_remove_four.state = false;
   }
 }
 
@@ -177,7 +180,9 @@ class Game {
 class Board {
   Button button_accept;
   Button button_lie;
-  Button remove_four;
+  Button button_remove_four;
+  Button button_sort;
+  
   ArrayList<Card> sta_player;
   ArrayList<Card> sta_game;
 
@@ -189,9 +194,11 @@ class Board {
 
 
   Board() {
-    button_accept = new Button(8.25f*width/10, 5.55f*height/6, width/25, height/30, "Legen", true);
-    button_lie = new Button(9.25f*width/10, 5.55f*height/6, width/25, height/30, "L\u00fcge", false);
-    remove_four = new Button(550*width/1000-307*height/1200, 320*height/600-34*height/600, width/5, height/30, "Vier der gleichen Sorte ablegen", true);
+    button_accept = new Button(8.25f*width/10, 5.32f*height/6, width/30, height/36, "Legen", true);
+    button_lie = new Button(9.25f*width/10, 5.32f*height/6, width/30, height/36, "L\u00fcge", false);
+    
+    button_sort = new Button(8.25f*width/10, 5.73f*height/6, width/30, height/36, "Sortieren", true);
+    button_remove_four = new Button(9.25f*width/10, 5.73f*height/6, width/30, height/36, "4 Ablegen", false);
 
     sta_player = new ArrayList<Card>();
     sta_game = new ArrayList<Card>();
@@ -207,7 +214,7 @@ class Board {
   }
 
 
-  public void draw() {
+  public void draw() { 
     // Draw wooden background and lines
     image(pi_board, 0, 0);
     strokeWeight(5);
@@ -219,7 +226,9 @@ class Board {
     // Draw buttons
     button_accept.draw();
     button_lie.draw();
-    if (four_available && !four_available_kind.equals("dame")) {remove_four.text = "Vier der gleichen Sorte ablegen: " + four_available_kind.substring(0, 1).toUpperCase()+four_available_kind.substring(1, four_available_kind.length()); remove_four.draw();}
+    button_sort.draw();
+    button_remove_four.draw();
+    //if (four_available && !four_available_kind.equals("dame")) {remove_four.text = "Vier der gleichen Sorte ablegen: " + four_available_kind.substring(0, 1).toUpperCase()+four_available_kind.substring(1, four_available_kind.length()); remove_four.draw();}
 
     // Draw cards
     int numberOfCards;
@@ -277,7 +286,7 @@ class Board {
     if (game.myTurn) {
       textSize(15);
       fill(255, 0, 255);
-      text("It's your turn!", 828, 517);
+      text("It's your turn!", 828*1000/width, 475*600/height);
       textSize(11);
     }
 
@@ -352,6 +361,25 @@ class Board {
       four_available_kind = "none";
     }
   }
+  
+  public void sort() {
+    ArrayList<Card> sta_sort = new ArrayList<Card>();
+    sta_sort  = sta_player;
+    sta_player = new ArrayList<Card>();
+
+    for(float value = 7; value < 15; value+=0.1f) {
+      for(int i=0; i<sta_sort.size(); i++) {
+        Card card = sta_sort.get(i);
+        if(card.value <= value) {
+          sta_player.add(card);
+          sta_sort.remove(card);
+          i=0;
+        }
+      }
+    } 
+    sta_sort = new ArrayList<Card>();
+    for(Card card : sta_player) {sta_sort.add(card);}
+  }
 }
 
 
@@ -364,20 +392,45 @@ class Card {
   PImage kartenbild;
   PImage kartenbildB;
   int selectedcol;
+  int freshcol;
   float lastx, lasty;
+  float value;
   boolean highlighted = false;
   boolean hidden;
+  int birthtime;
 
 
   Card(String p_farbe, String p_id, boolean p_hidden) {
     farbe = p_farbe;
     id = p_id;
     hidden = p_hidden;
+    value = determineValue();
     kartenbild = getImage();
     selectedcol = color(0xff14FF00);
+    freshcol = color(0xffFAD412);
+    birthtime = millis();
   }
 
-
+  public float determineValue() {
+    float value = 0;
+    
+    if(farbe.equals("herz")) value+=0.1f;
+    else if(farbe.equals("karo")) value+=0.2f;
+    else if(farbe.equals("kreuz")) value+=0.3f;
+    else if(farbe.equals("pik")) value+=0.4f;
+    
+    if(id.equals("7")) value+=7;
+    else if(id.equals("8")) value+=8;
+    else if(id.equals("9")) value+=9;
+    else if(id.equals("10")) value+=10;
+    else if(id.equals("bube")) value+=11;
+    else if(id.equals("dame")) value+=12;
+    else if(id.equals("k\u00f6nig")) value+=13;
+    else if(id.equals("ass")) value+=14;
+    
+    return value;
+  }
+  
   public PImage getImage() {
     String reference = farbe+id;
     PImage image = new PImage();
@@ -411,8 +464,9 @@ class Card {
     lastx = xpos;
     lasty = ypos;
 
-    if (highlighted) {
-      stroke(selectedcol);
+    if (highlighted || (millis()-birthtime < 1500 && !farbe.equals("mutated") && !hidden)) {
+      if(highlighted) stroke(selectedcol);
+      else stroke(freshcol);
       strokeWeight(3);
       noFill();
       rectMode(CORNERS);
@@ -806,7 +860,7 @@ class Network {
     else if (command.equals("+paa"))                                              game.board.playingas = tag1;
     else if (command.equals("+tsc"))                                              {Card card = new Card(tag1, tag2, true); for(int i=0; i<game.board.sta_game.size(); i++) {if(game.board.sta_game.get(i).farbe.equals(tag1) && game.board.sta_game.get(i).id.equals(tag2)) {game.board.sta_game.remove(i); i=-1;}} card.hidden=false; game.board.sta_game.add(card);}
     else if (command.equals("+con"))                                              {game.board.playingas="null";}  
-    else if (command.equals("+res") && tag1.equals("ALL") && tag2.equals("ALL"))  {String id = game.playerid; game = new Game(); game.playerid = id;}
+    else if (command.equals("+res") && tag1.equals("ALL") && tag2.equals("ALL"))  {println("here"); String id = game.playerid; game = new Game(); game.playerid = id;}
     else if (command.equals("+fre") && tag1.equals("+"))                          {game.board.load_background("fnaf.jpg");}
     else if (command.equals("+fre") && tag1.equals("-"))                          {game.board.load_background("board.jpg");}
     else if (command.equals("+npi") && tag1.equals(game.playerid))                {game.playerid = tag2;}
@@ -892,6 +946,8 @@ public void pregame() {
 }
 
 public void connect() {
+     if(prescreen.serverip.content.equals("x")) {prescreen.serverip.content="127.0.0.1";}
+     if(prescreen.playername.content.equals("x")) {prescreen.playername.content="Player"+hour()+minute()+second();}
      client = new Client(this, prescreen.serverip.content, 6878);
      game.stage++;
      println(prescreen.playername.content);

@@ -49,7 +49,7 @@ void get_tags(String msg, String command) {
     if (msg.charAt(i) == '<') open1 = i;
     else if (msg.charAt(i) == '>') close1 = i;
 
-    if (open1 != 0 && close1 != 0) {
+    if (open1 > 0 && close1 > 0) { //?!
       tag1 = msg.substring(open1+1, close1);
       tag2 = msg.substring(close1+2, msg.length()-1);
       break;

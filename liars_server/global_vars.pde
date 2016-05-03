@@ -18,12 +18,14 @@ boolean newPlayerFlag = false;
 boolean lied = false;
 boolean freddy = false;
 boolean gotMousePress = false;
+
 String whoseturn = "-1";
 String playingas = "none";
 String winner = "nowinner";
 String appendix = "";
 int gamestarttime = 0;
 int continueschedule = 0;
+
 
 void reset_vars() {
  for(Player player : players) {player.cards = new ArrayList<Server_Card>(); player.theirturn=false;}

@@ -1,4 +1,4 @@
-static String SERVER_VERSION = "0.9.3";
+static String SERVER_VERSION = "0.9.4";
 
 // TODO IMPLEMENT "DONE" as player var!
 // Server crasht wenn nachfolgende ID nicht mehr da ist |FIXED!
@@ -18,6 +18,7 @@ void draw() {
       if(name.equals(players.get(i).id)) {server.disconnect(players.get(i).client); toDisconnect=new ArrayList<String>();}
     }
   }
+  
   checkMouse();
   drawinfo();
   if        (STATE == 0)   waitstate();
@@ -141,6 +142,10 @@ void drawinfo() {
     
     yoffset+=14;
   }
+  
+   if(STATE==0) text("Waiting", 10, height-10);
+   else if(STATE==1) text("Playing", 10, height-10);
+   else text("Done", 10, height-10);
 }
 
 void getplayerturn() {

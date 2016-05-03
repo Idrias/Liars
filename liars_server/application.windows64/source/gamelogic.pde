@@ -80,7 +80,23 @@ void play() {
     server.write(msg);
   storedmsgs = new ArrayList<String>();
   recv();
-
+  
+  if(frameCount%240 == 0 && players.size() > 1) {
+    for(Player player : players) {
+      int damencount = 0;
+      for(Server_Card card : player.cards) {
+        if(card.id.equals("dame")) damencount++;
+      }
+      if(damencount==4 && players.size()>0) {
+        STATE = 0;
+        reset_vars();
+        server.write("+msg<Das Spiel wurde automatisch beendet:><>;");
+        server.write("+msg<"+player.alias+">< hatte vier Damen!>;");
+        server.write("+msg< ><>;");
+        return;
+      }
+    }
+  }
 
   if (!gameStarted) {
     gameStarted = true;

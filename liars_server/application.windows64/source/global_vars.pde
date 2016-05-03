@@ -5,6 +5,7 @@ ArrayList<Player> players;
 ArrayList<Server_Card> sta_game;
 ArrayList<Server_Card> lastcards;
 ArrayList<String> storedmsgs; 
+ArrayList<String> toDisconnect;
 
 Button giveturn;
 Button kick;
@@ -17,6 +18,7 @@ boolean newPlayerFlag = false;
 boolean lied = false;
 boolean freddy = false;
 boolean gotMousePress = false;
+
 String whoseturn = "-1";
 String playingas = "none";
 String winner = "nowinner";
@@ -24,11 +26,13 @@ String appendix = "";
 int gamestarttime = 0;
 int continueschedule = 0;
 
+
 void reset_vars() {
- for(Player player : players) player.cards = new ArrayList<Server_Card>();
+ for(Player player : players) {player.cards = new ArrayList<Server_Card>(); player.theirturn=false;}
  sta_game = new ArrayList<Server_Card>();
  lastcards = new ArrayList<Server_Card>();
  storedmsgs = new ArrayList<String>();
+ toDisconnect = new ArrayList<String>();
  lastplayer = null;
  gameStarted = false;
  newPlayerFlag = false;
@@ -49,7 +53,7 @@ void setup_vars() {
   sta_game = new ArrayList<Server_Card>();
   lastcards = new ArrayList<Server_Card>();
   storedmsgs = new ArrayList<String>();
-
+  toDisconnect = new ArrayList<String>();
   giveturn = new Button(width-240, height-75, 100, 25, "Give turn", false);
   kick = new Button(width-240, height-40, 100, 25, "Kick player", false);
 }

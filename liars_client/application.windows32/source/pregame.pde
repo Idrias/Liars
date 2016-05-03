@@ -77,6 +77,8 @@ void pregame() {
 }
 
 void connect() {
+     if(prescreen.serverip.content.equals("x")) {prescreen.serverip.content="127.0.0.1";}
+     if(prescreen.playername.content.equals("x")) {prescreen.playername.content="Player"+hour()+minute()+second();}
      client = new Client(this, prescreen.serverip.content, 6878);
      game.stage++;
      println(prescreen.playername.content);

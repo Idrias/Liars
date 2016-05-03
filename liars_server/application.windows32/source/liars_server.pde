@@ -1,7 +1,9 @@
-static String SERVER_VERSION = "0.9.3";
+static String SERVER_VERSION = "0.9.4";
 
-// TODO IMPLEMENT "DONE"!
-// Server crasht wenn nachfolgende ID nicht mehr da ist
+// TODO IMPLEMENT "DONE" as player var!
+// Server crasht wenn nachfolgende ID nicht mehr da ist |FIXED!
+// First player skip: nachfolgender kann nicht als auslegen |Workaround
+// recommendation: sort cards  
 
 void setup() {
   server = new Server(this, 6878);
@@ -11,6 +13,12 @@ void setup() {
 
 
 void draw() {
+  for(String name : toDisconnect) {
+    for(int i=0; i<players.size(); i++) {
+      if(name.equals(players.get(i).id)) {server.disconnect(players.get(i).client); toDisconnect=new ArrayList<String>();}
+    }
+  }
+  
   checkMouse();
   drawinfo();
   if        (STATE == 0)   waitstate();
@@ -30,10 +38,12 @@ void checkMouse() {
      if(giveturn.checkclick()) {maketurnflag=true;}
      
      for (Player player : players) {
+       println("checking", player.alias);
        if(maketurnflag && player.entryselected) {
          player.theirturn=true;
+         server.write("+eot<><>;");
          server.write("+msg<"+player.alias+" ist jetzt am Zug!><>;");
-         server.write("+npt<"+player.id+"><>;");
+         server.write("+dsp<"+player.id+"><>;");
          println("ACHTUNG SERVER ADMIN HAT SPIEL MANUPULIERT");
        }
        else if(maketurnflag && !player.entryselected) {
@@ -41,7 +51,8 @@ void checkMouse() {
        }
        
        else if(kickflag && player.entryselected) {
-         server.disconnect(player.client);
+         println("Disconnecting", player.alias);
+         toDisconnect.add(player.id);
        }
      } 
      
@@ -131,6 +142,10 @@ void drawinfo() {
     
     yoffset+=14;
   }
+  
+   if(STATE==0) text("Waiting", 10, height-10);
+   else if(STATE==1) text("Playing", 10, height-10);
+   else text("Done", 10, height-10);
 }
 
 void getplayerturn() {

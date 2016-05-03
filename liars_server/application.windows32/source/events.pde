@@ -23,33 +23,28 @@ void serverEvent(Server theServer, Client theClient) {
 
 
 void disconnectEvent(Client theClient) {
-  for (int i=0; i<players.size(); i++) {
-    if (players.get(i).client == theClient) {
-      println("WE LOST PLAYER " + players.get(i).id); 
-      
-      for(Server_Card card : players.get(i).cards) {
-        sta_game.add(card);
-        storedmsgs.add("+gst<"+(card.farbe)+"><"+(card.id)+">;");
+   for(int i = 0; i<players.size(); i++) {
+     Player player = players.get(i);
+     if(player.client == theClient) {
+       players.remove(player);
+       storedmsgs.add("+msg<"+players.get(i).alias+">< left the server!>;");
+     
+       for(Server_Card card : players.get(i).cards) {
+         sta_game.add(card);
+         storedmsgs.add("+gst<"+(card.farbe)+"><"+(card.id)+">;");
+       } 
+       
+       
+        int awaitednum = 1;
+        for(Player player2 : players) {
+          if(int(player2.id) != awaitednum) {
+        String newid = ""+awaitednum;
+        if(awaitednum<10) newid = "0"+newid;
+        server.write("+npi<"+player2.id+"><"+newid+">;");
+        player2.id = newid;
       }
-      
-      server.write("+msg<"+players.get(i).alias+">< left the server!>;");
-      
-      if(players.get(i).theirturn) {
-      }
-      
-      players.remove(players.get(i));
+      awaitednum++;
     }
-  }
-  
-  int awaitednum = 1;
-  for(Player player : players) {
-    if(int(player.id) != awaitednum) {
-      String newid = ""+awaitednum;
-      if(awaitednum<10) newid = "0"+newid;
-      server.write("+npi<"+player.id+"><"+newid+">;");
-      player.id = newid;
-    }
-    awaitednum++;
-  }
-
+     }
+   }
 }
