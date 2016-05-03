@@ -1,5 +1,5 @@
 //
-static String CLIENT_VERSION = "0.9.3";
+static String CLIENT_VERSION = "0.9.4";
 //
 
 void setup() {
