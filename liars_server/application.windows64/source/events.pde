@@ -1,5 +1,6 @@
 void serverEvent(Server theServer, Client theClient) {
   if(STATE==0) {
+    lastsubt = "";
     int playerid = 1;
   
     for (int i=0; i<players.size(); i++) {
@@ -23,6 +24,7 @@ void serverEvent(Server theServer, Client theClient) {
 
 
 void disconnectEvent(Client theClient) {
+  lastsubt = "";
    for(int i = 0; i<players.size(); i++) {
      Player player = players.get(i);
      if(player.client == theClient) {

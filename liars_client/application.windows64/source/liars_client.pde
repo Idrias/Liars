@@ -22,6 +22,8 @@ void draw() {
                  game.board.draw();
                  break;
   } 
+  
+  text(mouseX + " " + mouseY, mouseX+50, mouseY+10);
 }
 
 

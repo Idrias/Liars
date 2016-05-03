@@ -19,6 +19,7 @@ boolean lied = false;
 boolean freddy = false;
 boolean gotMousePress = false;
 
+String lastsubt = "";
 String whoseturn = "-1";
 String playingas = "none";
 String winner = "nowinner";

@@ -111,6 +111,11 @@ void play() {
     println(startplayer.id, "ist Startspieler");
     startplayer.theirturn=true;
     server.write("+dsp<"+startplayer.id+"><>;");
+    server.write("+msg< ><>;");   
+    server.write("+msg<---|||---><>;");
+    server.write("+msg<Spielstart><>;");
+    server.write("+msg<"+startplayer.alias+">< beginnt!>;");
+    server.write("+msg< ><>;");
   }
 
 

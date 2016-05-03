@@ -40,6 +40,8 @@ public void draw() {
                  game.board.draw();
                  break;
   } 
+  
+  text(mouseX + " " + mouseY, mouseX+50, mouseY+10);
 }
 
 
@@ -188,6 +190,7 @@ class Board {
 
   ArrayList<String> msgs;
   String playingas = "none";
+  String subt = "";
   PImage pi_board;
   boolean four_available = false;
   String four_available_kind = "";
@@ -305,6 +308,8 @@ class Board {
     }
 
     textAlign(CENTER, CENTER);
+    fill(0);
+    text(subt, 375*width/1000, height*390/600);
   }
 
   public PImage find_referencedImage(String reference) {
@@ -865,6 +870,7 @@ class Network {
     else if (command.equals("+fre") && tag1.equals("-"))                          {game.board.load_background("board.jpg");}
     else if (command.equals("+npi") && tag1.equals(game.playerid))                {game.playerid = tag2;}
     else if (command.equals("+eot"))                                              {game.myTurn = false; game.firstTurn=false;}
+    else if (command.equals("+sub"))                                              {game.board.subt = tag1;}
   }
 }
 class Prescreen {

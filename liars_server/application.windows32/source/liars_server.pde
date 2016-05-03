@@ -19,6 +19,7 @@ void draw() {
     }
   }
   
+  checksubt();
   checkMouse();
   drawinfo();
   if        (STATE == 0)   waitstate();
@@ -105,6 +106,16 @@ void keyPressed() {
     freddy = true;
     server.write("+fre<+><>;");
   }
+}
+
+void checksubt() {
+  String subt = "| ";
+  for(Player player : players) {
+    subt += player.alias + " ("+player.id+")" + " | "; 
+  }
+  
+  if(!subt.equals(lastsubt)) {server.write("+sub<"+subt+"><>;"); println("Sending subt");}
+  lastsubt = subt;
 }
 
 void drawinfo() {

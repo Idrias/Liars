@@ -131,6 +131,7 @@ class Board {
 
   ArrayList<String> msgs;
   String playingas = "none";
+  String subt = "";
   PImage pi_board;
   boolean four_available = false;
   String four_available_kind = "";
@@ -248,6 +249,8 @@ class Board {
     }
 
     textAlign(CENTER, CENTER);
+    fill(0);
+    text(subt, 375*width/1000, height*390/600);
   }
 
   PImage find_referencedImage(String reference) {

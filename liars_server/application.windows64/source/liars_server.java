@@ -37,6 +37,7 @@ public void draw() {
     }
   }
   
+  checksubt();
   checkMouse();
   drawinfo();
   if        (STATE == 0)   waitstate();
@@ -123,6 +124,16 @@ public void keyPressed() {
     freddy = true;
     server.write("+fre<+><>;");
   }
+}
+
+public void checksubt() {
+  String subt = "| ";
+  for(Player player : players) {
+    subt += player.alias + " ("+player.id+")" + " | "; 
+  }
+  
+  if(!subt.equals(lastsubt)) {server.write("+sub<"+subt+"><>;"); println("Sending subt");}
+  lastsubt = subt;
 }
 
 public void drawinfo() {
@@ -253,6 +264,7 @@ class Button {
 }
 public void serverEvent(Server theServer, Client theClient) {
   if(STATE==0) {
+    lastsubt = "";
     int playerid = 1;
   
     for (int i=0; i<players.size(); i++) {
@@ -276,6 +288,7 @@ public void serverEvent(Server theServer, Client theClient) {
 
 
 public void disconnectEvent(Client theClient) {
+  lastsubt = "";
    for(int i = 0; i<players.size(); i++) {
      Player player = players.get(i);
      if(player.client == theClient) {
@@ -316,7 +329,7 @@ public void schedule() {
     getplayerturn();
     server.write("+con<><>;");
     server.write("-gst<all><all>;");
-    println("GAFHAF");
+    println("GAFHAF"); //<>//
     for (Player player : players) {
       println(player.id, "check");
       if (player.theirturn) { //!!!!//
@@ -414,6 +427,11 @@ public void play() {
     println(startplayer.id, "ist Startspieler");
     startplayer.theirturn=true;
     server.write("+dsp<"+startplayer.id+"><>;");
+    server.write("+msg< ><>;");   
+    server.write("+msg<---|||---><>;");
+    server.write("+msg<Spielstart><>;");
+    server.write("+msg<"+startplayer.alias+">< beginnt!>;");
+    server.write("+msg< ><>;");
   }
 
 
@@ -439,6 +457,7 @@ boolean lied = false;
 boolean freddy = false;
 boolean gotMousePress = false;
 
+String lastsubt = "";
 String whoseturn = "-1";
 String playingas = "none";
 String winner = "nowinner";
