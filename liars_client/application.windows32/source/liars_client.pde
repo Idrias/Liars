@@ -1,4 +1,6 @@
+//
 static String CLIENT_VERSION = "0.9.3";
+//
 
 void setup() {
   size(1000, 600);

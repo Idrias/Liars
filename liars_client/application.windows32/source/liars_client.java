@@ -16,7 +16,9 @@ import java.io.IOException;
 
 public class liars_client extends PApplet {
 
+//
 static String CLIENT_VERSION = "0.9.3";
+//
 
 public void setup() {
   
@@ -808,6 +810,7 @@ class Network {
     else if (command.equals("+fre") && tag1.equals("+"))                          {game.board.load_background("fnaf.jpg");}
     else if (command.equals("+fre") && tag1.equals("-"))                          {game.board.load_background("board.jpg");}
     else if (command.equals("+npi") && tag1.equals(game.playerid))                {game.playerid = tag2;}
+    else if (command.equals("+eot"))                                              {game.myTurn = false; game.firstTurn=false;}
   }
 }
 class Prescreen {

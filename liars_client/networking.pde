@@ -90,5 +90,6 @@ class Network {
     else if (command.equals("+fre") && tag1.equals("+"))                          {game.board.load_background("fnaf.jpg");}
     else if (command.equals("+fre") && tag1.equals("-"))                          {game.board.load_background("board.jpg");}
     else if (command.equals("+npi") && tag1.equals(game.playerid))                {game.playerid = tag2;}
+    else if (command.equals("+eot"))                                              {game.myTurn = false; game.firstTurn=false;}
   }
 }
