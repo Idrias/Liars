@@ -1,9 +1,9 @@
 //
-static String CLIENT_VERSION = "0.9.4";
+static String CLIENT_VERSION = "0.9.5";
 //
 
 void setup() {
-  size(1000, 600);
+  size(960, 540);
   //fullScreen();
   rectMode(RADIUS);
   textAlign(CENTER, CENTER);
@@ -22,8 +22,6 @@ void draw() {
                  game.board.draw();
                  break;
   } 
-  
-  text(mouseX + " " + mouseY, mouseX+50, mouseY+10);
 }
 
 

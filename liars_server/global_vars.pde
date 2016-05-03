@@ -9,9 +9,15 @@ ArrayList<String> toDisconnect;
 
 Button giveturn;
 Button kick;
+Button reset;
+Button start;
+
+
 Server server;
 Player lastplayer;
 
+PImage pi_freddy;
+PImage pi_freddym;
 int STATE = 0;
 boolean gameStarted = false;
 boolean newPlayerFlag = false;
@@ -49,7 +55,12 @@ void reset_vars() {
 
 void setup_vars() {
   setup_cards();
- 
+  
+  pi_freddy = loadImage("/assets/background/freddy.jpg");
+  pi_freddy.resize(width-530, 0);
+  pi_freddym = loadImage("/assets/background/freddym.jpg");
+  pi_freddym.resize(width-530, 0);
+  
   players = new ArrayList<Player>();
   sta_game = new ArrayList<Server_Card>();
   lastcards = new ArrayList<Server_Card>();
@@ -57,6 +68,8 @@ void setup_vars() {
   toDisconnect = new ArrayList<String>();
   giveturn = new Button(width-240, height-75, 100, 25, "Give turn", false);
   kick = new Button(width-240, height-40, 100, 25, "Kick player", false);
+  reset = new Button(width-120, height-75, 100, 25, "Reset", true);
+  start = new Button(width-120, height-40, 100, 25, "Start", false);
 }
 
  

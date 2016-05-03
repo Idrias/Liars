@@ -17,7 +17,7 @@ import java.io.IOException;
 public class liars_client extends PApplet {
 
 //
-static String CLIENT_VERSION = "0.9.4";
+static String CLIENT_VERSION = "0.9.5";
 //
 
 public void setup() {
@@ -40,8 +40,6 @@ public void draw() {
                  game.board.draw();
                  break;
   } 
-  
-  text(mouseX + " " + mouseY, mouseX+50, mouseY+10);
 }
 
 
@@ -188,6 +186,7 @@ class Board {
   ArrayList<Card> sta_player;
   ArrayList<Card> sta_game;
 
+  ArrayList<Bomber> bombers;
   ArrayList<String> msgs;
   String playingas = "none";
   String subt = "";
@@ -206,6 +205,7 @@ class Board {
     sta_player = new ArrayList<Card>();
     sta_game = new ArrayList<Card>();
     msgs = new ArrayList<String>();
+    bombers = new ArrayList<Bomber>();
 
     load_background("board.jpg");
   }
@@ -289,7 +289,7 @@ class Board {
     if (game.myTurn) {
       textSize(15);
       fill(255, 0, 255);
-      text("It's your turn!", 828*1000/width, 475*600/height);
+      text("It's your turn!", 828*width/1000, 475*height/600);
       textSize(11);
     }
 
@@ -310,6 +310,8 @@ class Board {
     textAlign(CENTER, CENTER);
     fill(0);
     text(subt, 375*width/1000, height*390/600);
+    
+    for(Bomber bomber : bombers) bomber.act();
   }
 
   public PImage find_referencedImage(String reference) {
@@ -654,6 +656,43 @@ class ReferencedImage {
     reference = p_reference;
   }
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+class Bomber {
+  float xpos, ypos;
+  PVector v;
+  boolean active;
+  int stepslived = 0;
+  PImage pi_bomber;
+  
+  Bomber() {
+    pi_bomber = loadImage("/assets/etc/bomber.png");
+    pi_bomber.resize(150, 0);
+    v = new PVector();
+    
+    v.x = random(2, 8);
+    v.y = random(-0.5f, 0.5f);
+ 
+    xpos = 0;
+    ypos = height/2-150;
+  }
+  
+  public void act() {
+    if(xpos>width+200) return;
+    
+    xpos += v.x;
+    ypos += v.y;
+    
+    draw();
+    stepslived++;
+  }
+  
+  public void draw() {
+    image(pi_bomber, xpos, ypos);
+  }
+}
 ArrayList<String> creditroll;
 int starttime = 0;
 float yroll = 0;
@@ -871,6 +910,7 @@ class Network {
     else if (command.equals("+npi") && tag1.equals(game.playerid))                {game.playerid = tag2;}
     else if (command.equals("+eot"))                                              {game.myTurn = false; game.firstTurn=false;}
     else if (command.equals("+sub"))                                              {game.board.subt = tag1;}
+    else if (command.equals("+bom"))                                              {game.board.bombers.add(new Bomber());}
   }
 }
 class Prescreen {
@@ -990,7 +1030,7 @@ public void keyPressed() {
     } else if (target!=null) target.content += key;
   }
 }
-  public void settings() {  size(1000, 600); }
+  public void settings() {  size(960, 540); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "liars_client" };
     if (passedArgs != null) {

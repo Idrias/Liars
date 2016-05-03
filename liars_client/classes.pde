@@ -129,6 +129,7 @@ class Board {
   ArrayList<Card> sta_player;
   ArrayList<Card> sta_game;
 
+  ArrayList<Bomber> bombers;
   ArrayList<String> msgs;
   String playingas = "none";
   String subt = "";
@@ -147,6 +148,7 @@ class Board {
     sta_player = new ArrayList<Card>();
     sta_game = new ArrayList<Card>();
     msgs = new ArrayList<String>();
+    bombers = new ArrayList<Bomber>();
 
     load_background("board.jpg");
   }
@@ -230,7 +232,7 @@ class Board {
     if (game.myTurn) {
       textSize(15);
       fill(255, 0, 255);
-      text("It's your turn!", 828*1000/width, 475*600/height);
+      text("It's your turn!", 828*width/1000, 475*height/600);
       textSize(11);
     }
 
@@ -251,6 +253,8 @@ class Board {
     textAlign(CENTER, CENTER);
     fill(0);
     text(subt, 375*width/1000, height*390/600);
+    
+    for(Bomber bomber : bombers) bomber.act();
   }
 
   PImage find_referencedImage(String reference) {
@@ -593,5 +597,42 @@ class ReferencedImage {
   ReferencedImage(String p_path, String p_reference) {
     image = loadImage(p_path);
     reference = p_reference;
+  }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+class Bomber {
+  float xpos, ypos;
+  PVector v;
+  boolean active;
+  int stepslived = 0;
+  PImage pi_bomber;
+  
+  Bomber() {
+    pi_bomber = loadImage("/assets/etc/bomber.png");
+    pi_bomber.resize(150, 0);
+    v = new PVector();
+    
+    v.x = random(2, 8);
+    v.y = random(-0.5, 0.5);
+ 
+    xpos = 0;
+    ypos = height/2-150;
+  }
+  
+  void act() {
+    if(xpos>width+200) return;
+    
+    xpos += v.x;
+    ypos += v.y;
+    
+    draw();
+    stepslived++;
+  }
+  
+  void draw() {
+    image(pi_bomber, xpos, ypos);
   }
 }

@@ -75,6 +75,6 @@ class Button {
     fill(col);
     rect(xpos, ypos, radx, rady);
     fill(0);
-    text(text, xpos+25, ypos+rady/2+5);
+    text(text, xpos+radx/2, ypos+rady/2);
   }
 }

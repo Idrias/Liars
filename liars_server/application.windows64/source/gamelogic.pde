@@ -13,7 +13,7 @@ void schedule() {
     getplayerturn();
     server.write("+con<><>;");
     server.write("-gst<all><all>;");
-    println("GAFHAF"); //<>//
+    println("GAFHAF");
     for (Player player : players) {
       println(player.id, "check");
       if (player.theirturn) { //!!!!//

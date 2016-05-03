@@ -92,5 +92,6 @@ class Network {
     else if (command.equals("+npi") && tag1.equals(game.playerid))                {game.playerid = tag2;}
     else if (command.equals("+eot"))                                              {game.myTurn = false; game.firstTurn=false;}
     else if (command.equals("+sub"))                                              {game.board.subt = tag1;}
+    else if (command.equals("+bom"))                                              {game.board.bombers.add(new Bomber());}
   }
 }

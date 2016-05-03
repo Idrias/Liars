@@ -16,7 +16,7 @@ import java.io.IOException;
 
 public class liars_server extends PApplet {
 
-static String SERVER_VERSION = "0.9.4";
+static String SERVER_VERSION = "0.9.5";
 
 // TODO IMPLEMENT "DONE" as player var!
 // Server crasht wenn nachfolgende ID nicht mehr da ist |FIXED!
@@ -37,13 +37,22 @@ public void draw() {
     }
   }
   
+  checkstate(); 
   checksubt();
   checkMouse();
   drawinfo();
+  
   if        (STATE == 0)   waitstate();
   else if   (STATE == 1)   play();
 }
 
+public void checkstate(){
+  if(players.size() > 0) {
+    start.state = true;
+  }
+  
+  else start.state = false;
+}
 
 public void checkMouse() {
   if(mousePressed && !gotMousePress) {
@@ -53,6 +62,8 @@ public void checkMouse() {
      boolean kickflag = false;
      boolean maketurnflag = false;
      
+     if(start.checkclick()) STATE = 1;
+     if(reset.checkclick()) {STATE = 0; reset_vars();}
      if(kick.checkclick()) {kickflag=true;}
      if(giveturn.checkclick()) {maketurnflag=true;}
      
@@ -124,6 +135,10 @@ public void keyPressed() {
     freddy = true;
     server.write("+fre<+><>;");
   }
+  
+  else if(key=='b') {
+    server.write("+bom<><>;");
+  }
 }
 
 public void checksubt() {
@@ -141,9 +156,16 @@ public void drawinfo() {
   stroke(255);
   line(545, 300, width, 300);
   line(545, 0, 545, height);
+  if(!freddy) image(pi_freddy, 555, 20);
+  else image(pi_freddym, 546, 0);
   
+  textAlign(CENTER, CENTER);
   giveturn.draw();
   kick.draw();
+  reset.draw();
+  start.draw();
+  textAlign(BASELINE, BASELINE);
+  
   fill(255);
   text("IP", 10, 20);
   text("ID", 100, 20);
@@ -175,6 +197,8 @@ public void drawinfo() {
    if(STATE==0) text("Waiting", 10, height-10);
    else if(STATE==1) text("Playing", 10, height-10);
    else text("Done", 10, height-10);
+   
+   text(hour()+":"+minute()+":"+second()+"  -  "+Server.ip(), 100, height-10);
 }
 
 public void getplayerturn() {
@@ -259,7 +283,7 @@ class Button {
     fill(col);
     rect(xpos, ypos, radx, rady);
     fill(0);
-    text(text, xpos+25, ypos+rady/2+5);
+    text(text, xpos+radx/2, ypos+rady/2);
   }
 }
 public void serverEvent(Server theServer, Client theClient) {
@@ -329,7 +353,7 @@ public void schedule() {
     getplayerturn();
     server.write("+con<><>;");
     server.write("-gst<all><all>;");
-    println("GAFHAF"); //<>//
+    println("GAFHAF");
     for (Player player : players) {
       println(player.id, "check");
       if (player.theirturn) { //!!!!//
@@ -447,9 +471,15 @@ ArrayList<String> toDisconnect;
 
 Button giveturn;
 Button kick;
+Button reset;
+Button start;
+
+
 Server server;
 Player lastplayer;
 
+PImage pi_freddy;
+PImage pi_freddym;
 int STATE = 0;
 boolean gameStarted = false;
 boolean newPlayerFlag = false;
@@ -487,7 +517,12 @@ public void reset_vars() {
 
 public void setup_vars() {
   setup_cards();
- 
+  
+  pi_freddy = loadImage("/assets/background/freddy.jpg");
+  pi_freddy.resize(width-530, 0);
+  pi_freddym = loadImage("/assets/background/freddym.jpg");
+  pi_freddym.resize(width-530, 0);
+  
   players = new ArrayList<Player>();
   sta_game = new ArrayList<Server_Card>();
   lastcards = new ArrayList<Server_Card>();
@@ -495,6 +530,8 @@ public void setup_vars() {
   toDisconnect = new ArrayList<String>();
   giveturn = new Button(width-240, height-75, 100, 25, "Give turn", false);
   kick = new Button(width-240, height-40, 100, 25, "Kick player", false);
+  reset = new Button(width-120, height-75, 100, 25, "Reset", true);
+  start = new Button(width-120, height-40, 100, 25, "Start", false);
 }
 
  
