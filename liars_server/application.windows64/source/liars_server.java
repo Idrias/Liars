@@ -47,7 +47,7 @@ public void draw() {
 }
 
 public void checkstate(){
-  if(players.size() > 0) {
+  if(players.size() > 0 && STATE == 0) {
     start.state = true;
   }
   
@@ -269,8 +269,8 @@ class Button {
 
 
   public boolean checkclick() {
-    if (mouseX > xpos-radx && mouseX < xpos+radx) {
-      if (mouseY > ypos - rady && mouseY < ypos+rady) {
+    if (mouseX > xpos && mouseX < xpos+radx) {
+      if (mouseY > ypos && mouseY < ypos+rady) {
         if (state) return true;
       }
     }

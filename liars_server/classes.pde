@@ -61,8 +61,8 @@ class Button {
 
 
   boolean checkclick() {
-    if (mouseX > xpos-radx && mouseX < xpos+radx) {
-      if (mouseY > ypos - rady && mouseY < ypos+rady) {
+    if (mouseX > xpos && mouseX < xpos+radx) {
+      if (mouseY > ypos && mouseY < ypos+rady) {
         if (state) return true;
       }
     }

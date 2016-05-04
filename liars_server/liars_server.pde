@@ -29,7 +29,7 @@ void draw() {
 }
 
 void checkstate(){
-  if(players.size() > 0) {
+  if(players.size() > 0 && STATE == 0) {
     start.state = true;
   }
   
