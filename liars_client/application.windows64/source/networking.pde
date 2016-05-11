@@ -93,5 +93,6 @@ class Network {
     else if (command.equals("+eot"))                                              {game.myTurn = false; game.firstTurn=false;}
     else if (command.equals("+sub"))                                              {game.board.subt = tag1;}
     else if (command.equals("+bom"))                                              {game.board.bombers.add(new Bomber());}
+    else if (command.equals("+cen"))                                              {audio.play("sound", "cena", true, false);}
   }
 }

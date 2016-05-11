@@ -1,13 +1,20 @@
 import processing.net.*;
+import ddf.minim.*;
+
 
 Network network;
 Game game;
 Client client;
 Prescreen prescreen;
 PlayAsRequest par;
+AudioManager audio;
+Minim minim;
 String lastip = "";
 String lastname = "";
 ArrayList<ReferencedImage> images;
+
+
+
 
 void setup_vars() {
   setup_referencedImages();
@@ -16,7 +23,6 @@ void setup_vars() {
   game.stage = -1;
   prescreen = new Prescreen();
   par = new PlayAsRequest();
-
 }
 
 

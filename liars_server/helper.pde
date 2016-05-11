@@ -1,3 +1,14 @@
+void disconnectTask() {
+  for (String name : toDisconnect) {
+    for (int i=0; i<players.size(); i++) {
+      if (name.equals(players.get(i).id)) {
+        server.disconnect(players.get(i).client); 
+        toDisconnect=new ArrayList<String>();
+      }
+    }
+  }
+}
+
 void give_cards() {
   ArrayList<Server_Card> cards = new ArrayList<Server_Card>();
   for (Server_Card card : all_cards) cards.add(card); // Gleichsetzen nicht möglich da sonst reference!

@@ -24,9 +24,9 @@ class Game {
     if (mousePressed) {
       if (!got_clicked) {
         got_clicked = true;
-        
-        if(board.button_sort.checkclick()) board.sort();
-        
+
+        if (board.button_sort.checkclick()) board.sort();
+
         if (board.four_available && !board.four_available_kind.equals("dame") && board.button_remove_four.checkclick()) {
           network.push("-dl4", board.four_available_kind, "");
           for (int i=0; i<board.sta_player.size(); i++) {
@@ -47,12 +47,12 @@ class Game {
               break;
             };
           }
-          
+
           if (board.button_lie.checkclick()) {
             network.push("+lam", playerid, "");
             game.myTurn = false;
           }
-          
+
           if (board.button_accept.checkclick()) {
             if (game.myTurn) {
               if ((game.firstTurn && !par.playas.equals("none")) || !game.firstTurn) {
@@ -62,7 +62,10 @@ class Game {
                     String farbe = subject.farbe;
                     String id = subject.id;
 
-                    if (game.firstTurn) {network.push("+paa", par.playas, ""); game.firstTurn=false;}
+                    if (game.firstTurn) {
+                      network.push("+paa", par.playas, ""); 
+                      game.firstTurn=false;
+                    }
                     network.push("+gst", farbe, id);
                     board.sta_player.remove(board.sta_player.get(i));
                     i = -1;
@@ -112,7 +115,8 @@ class Game {
     }
 
     if (!gotOne) board.button_accept.state = false;
-    if(board.four_available) board.button_remove_four.state = true; else board.button_remove_four.state = false;
+    if (board.four_available) board.button_remove_four.state = true; 
+    else board.button_remove_four.state = false;
   }
 }
 
@@ -125,7 +129,7 @@ class Board {
   Button button_lie;
   Button button_remove_four;
   Button button_sort;
-  
+
   ArrayList<Card> sta_player;
   ArrayList<Card> sta_game;
 
@@ -141,7 +145,7 @@ class Board {
   Board() {
     button_accept = new Button(8.25*width/10, 5.32*height/6, width/30, height/36, "Legen", true);
     button_lie = new Button(9.25*width/10, 5.32*height/6, width/30, height/36, "Lüge", false);
-    
+
     button_sort = new Button(8.25*width/10, 5.73*height/6, width/30, height/36, "Sortieren", true);
     button_remove_four = new Button(9.25*width/10, 5.73*height/6, width/30, height/36, "4 Ablegen", false);
 
@@ -215,8 +219,8 @@ class Board {
     xpos = 0.765 * width;
     spacing = 14;
     textAlign(LEFT, CENTER);
-    while(msgs.size()>30) msgs.remove(0); 
-    
+    while (msgs.size()>30) msgs.remove(0); 
+
     for (String text : msgs) {
       text(text, xpos, ypos);
       ypos += spacing;
@@ -253,17 +257,17 @@ class Board {
     textAlign(CENTER, CENTER);
     fill(0);
     text(subt, 375*width/1000, height*390/600);
-    
-    for(Bomber bomber : bombers) bomber.act();
+
+    for (Bomber bomber : bombers) bomber.act();
   }
 
   PImage find_referencedImage(String reference) {
-    for(ReferencedImage refim : images) {
-      if(refim.reference.equals(reference)) return refim.image;
+    for (ReferencedImage refim : images) {
+      if (refim.reference.equals(reference)) return refim.image;
     }
     return null;
   }
-  
+
   void hasfour() {
     int count7 = 0;
     int count8 = 0;
@@ -284,8 +288,8 @@ class Board {
       else if (card.id.equals("könig")) countkoenig++;
       else if (card.id.equals("ass")) countass++;
     }
-      
-      if (count7==4) {
+
+    if (count7==4) {
       four_available=true; 
       four_available_kind="7";
     } else if (count8==4) {
@@ -311,16 +315,16 @@ class Board {
       four_available_kind = "none";
     }
   }
-  
+
   void sort() {
     ArrayList<Card> sta_sort = new ArrayList<Card>();
     sta_sort  = sta_player;
     sta_player = new ArrayList<Card>();
 
-    for(float value = 7; value < 15; value+=0.1) {
-      for(int i=0; i<sta_sort.size(); i++) {
+    for (float value = 7; value < 15; value+=0.1) {
+      for (int i=0; i<sta_sort.size(); i++) {
         Card card = sta_sort.get(i);
-        if(card.value <= value) {
+        if (card.value <= value) {
           sta_player.add(card);
           sta_sort.remove(card);
           i=0;
@@ -328,7 +332,9 @@ class Board {
       }
     } 
     sta_sort = new ArrayList<Card>();
-    for(Card card : sta_player) {sta_sort.add(card);}
+    for (Card card : sta_player) {
+      sta_sort.add(card);
+    }
   }
 }
 
@@ -363,45 +369,43 @@ class Card {
 
   float determineValue() {
     float value = 0;
-    
-    if(farbe.equals("herz")) value+=0.1;
-    else if(farbe.equals("karo")) value+=0.2;
-    else if(farbe.equals("kreuz")) value+=0.3;
-    else if(farbe.equals("pik")) value+=0.4;
-    
-    if(id.equals("7")) value+=7;
-    else if(id.equals("8")) value+=8;
-    else if(id.equals("9")) value+=9;
-    else if(id.equals("10")) value+=10;
-    else if(id.equals("bube")) value+=11;
-    else if(id.equals("dame")) value+=12;
-    else if(id.equals("könig")) value+=13;
-    else if(id.equals("ass")) value+=14;
-    
+
+    if (farbe.equals("herz")) value+=0.1;
+    else if (farbe.equals("karo")) value+=0.2;
+    else if (farbe.equals("kreuz")) value+=0.3;
+    else if (farbe.equals("pik")) value+=0.4;
+
+    if (id.equals("7")) value+=7;
+    else if (id.equals("8")) value+=8;
+    else if (id.equals("9")) value+=9;
+    else if (id.equals("10")) value+=10;
+    else if (id.equals("bube")) value+=11;
+    else if (id.equals("dame")) value+=12;
+    else if (id.equals("könig")) value+=13;
+    else if (id.equals("ass")) value+=14;
+
     return value;
   }
-  
+
   PImage getImage() {
     String reference = farbe+id;
     PImage image = new PImage();
     image = game.board.find_referencedImage(reference).copy();
     kartenbildB = game.board.find_referencedImage("backblack");
-    
-    if(image!=null) {
+
+    if (image!=null) {
       image.resize(width/10, 0);
       kartenbildB.resize(width/10, 0);
       return image;
-    }
-    
-    else {
-    println("nop");
-    String path = "/assets/cards/" + farbe + "/" + id + ".jpg";
-    image = loadImage(path);
-    kartenbildB = loadImage("/assets/cards/back/black.jpg");
+    } else {
+      println("nop");
+      String path = "/assets/cards/" + farbe + "/" + id + ".jpg";
+      image = loadImage(path);
+      kartenbildB = loadImage("/assets/cards/back/black.jpg");
 
-    image.resize(width/10, 0);
-    kartenbildB.resize(width/10, 0);
-    return image;
+      image.resize(width/10, 0);
+      kartenbildB.resize(width/10, 0);
+      return image;
     }
   }
 
@@ -415,7 +419,7 @@ class Card {
     lasty = ypos;
 
     if (highlighted || (millis()-birthtime < 1500 && !farbe.equals("mutated") && !hidden)) {
-      if(highlighted) stroke(selectedcol);
+      if (highlighted) stroke(selectedcol);
       else stroke(freshcol);
       strokeWeight(3);
       noFill();
@@ -548,8 +552,8 @@ class PlayAsRequest {
     cards.add(new Card("mutated", "bube", false));
     cards.add(new Card("mutated", "könig", false));
     cards.add(new Card("mutated", "ass", false));
-    
-    for(Card card : cards) card.kartenbild.resize(card.kartenbild.width/2, 0);
+
+    for (Card card : cards) card.kartenbild.resize(card.kartenbild.width/2, 0);
   }
 
 
@@ -593,7 +597,7 @@ class PlayAsRequest {
 class ReferencedImage {
   PImage image;
   String reference;
-  
+
   ReferencedImage(String p_path, String p_reference) {
     image = loadImage(p_path);
     reference = p_reference;
@@ -609,30 +613,164 @@ class Bomber {
   boolean active;
   int stepslived = 0;
   PImage pi_bomber;
-  
+
   Bomber() {
     pi_bomber = loadImage("/assets/etc/bomber.png");
     pi_bomber.resize(150, 0);
     v = new PVector();
-    
+
     v.x = random(2, 8);
     v.y = random(-0.5, 0.5);
- 
+
     xpos = 0;
     ypos = height/2-150;
   }
-  
+
   void act() {
-    if(xpos>width+200) return;
-    
+    if (xpos>width+200) return;
+
     xpos += v.x;
     ypos += v.y;
-    
+
     draw();
     stepslived++;
   }
-  
+
   void draw() {
     image(pi_bomber, xpos, ypos);
+  }
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+class AudioManager {
+  boolean mutedAmbient = false;
+  boolean mutedSound = false;
+  ArrayList<Referencedplayer> players;
+  ArrayList<AudioPlayer> playingAmbient;
+  ArrayList<AudioPlayer> playingSound;
+  String ambient = "";
+
+  AudioManager() {
+    players = new ArrayList<Referencedplayer>();
+    playingSound = new ArrayList<AudioPlayer>();
+    playingAmbient = new ArrayList<AudioPlayer>();
+    setup_players();
+  }
+
+  void muteAmbient() {
+    mutedAmbient = !mutedAmbient;
+    if (mutedAmbient) stopAll("ambient");
+    else ambient = "";
+  }
+
+  void muteSound() {
+    mutedSound = !mutedSound;
+    if (mutedSound) {
+      stopAll("sound");
+    }
+  }
+
+  void mixAmbient() {
+    if (game.stage == -1 && !ambient.equals("menu")) {
+      ambient = "menu";
+      stopAll("ambient");
+      play("ambient", "piano", true, true);
+    } else if (game.stage == 2 && !ambient.equals("waiting")) {
+      ambient = "waiting";
+      stopAll("ambient");
+      play("ambient", "saloon", true, true);
+    }
+  }
+
+  void setup_players() {
+    players.add( new Referencedplayer("/ambient/piano.mp3", "ambient_piano") );
+    players.add( new Referencedplayer("/ambient/saloon.mp3", "ambient_saloon") );
+    players.add( new Referencedplayer("/fx/gunshot.wav", "sound_gunshot") );
+    players.add( new Referencedplayer("/fx/cena.mp3", "sound_cena") );
+  }
+
+  void play(String sort, String what, boolean rewind, boolean loop) {
+    if ((mutedAmbient && sort.equals("ambient")) || (mutedSound && sort.equals("sound"))) return;
+    what = sort + "_" + what;
+
+    AudioPlayer toPlay = getByReference(what);
+    if (toPlay == null) {
+      println("Was not able to find sound: " + what); 
+      return;
+    }
+    if (rewind) toPlay.rewind();
+    if (loop) toPlay.loop();
+    else toPlay.play();
+
+    if (sort.equals("ambient")) playingAmbient.add(toPlay);
+    else playingSound.add(toPlay);
+  }
+
+  void stop(String sort, String what) {
+    what = sort + "_" + what;
+    AudioPlayer toStop = getByReference(what);
+    if (toStop == null) {
+      println("Was not able to find sound: " + what); 
+      return;
+    }
+    toStop.pause();
+    toStop.rewind();
+    if (sort.equals("ambient")) playingAmbient.remove(toStop);
+    else playingSound.remove(toStop);
+  }
+
+  void pause(String sort, String what) {
+    what = sort + "_" + what;
+    AudioPlayer toStop = getByReference(what);
+    if (toStop == null) {
+      println("Was not able to find sound: " + what); 
+      return;
+    }
+    toStop.pause();
+    if (sort.equals("ambient")) playingAmbient.remove(toStop);
+    else playingSound.remove(toStop);
+  }
+
+  void stopAll(String which) {
+    if (which.equals("ambient") || which.equals("all")) {
+      for (AudioPlayer player : playingAmbient) {
+        player.pause();
+        player.rewind();
+      }
+      playingAmbient = new ArrayList<AudioPlayer>();
+    }
+
+    if (which.equals("sound") || which.equals("all")) {
+      for (AudioPlayer player : playingSound) {
+        player.pause();
+        player.rewind();
+      }
+      playingSound = new ArrayList<AudioPlayer>();
+    }
+  }
+
+  AudioPlayer getByReference(String reference) {
+    for (Referencedplayer rs : players) {
+      if (rs.reference.equals(reference))
+        return rs.player;
+    }
+    return null;
+  }
+} 
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////
+class Referencedplayer {
+  AudioPlayer player;
+  String reference;
+
+  Referencedplayer(String p_path, String p_reference) {
+    player = minim.loadFile("/assets/audio"+p_path);
+    reference = p_reference;
   }
 }

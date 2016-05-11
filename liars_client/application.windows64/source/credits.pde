@@ -36,7 +36,7 @@ void setup_creditroll() {
   creditroll.add("Tester - Lukas Marquetant");
   creditroll.add("Tester - Oliver Arndt");
   creditroll.add("       ");
-  creditroll.add("Additional");
+  creditroll.add("Art, SoundFX & Music");
   creditroll.add("For additional credit");
   creditroll.add("view the readme doc");
   creditroll.add("       ");

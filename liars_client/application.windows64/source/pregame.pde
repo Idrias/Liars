@@ -87,6 +87,10 @@ void connect() {
 }
 
 void keyPressed() {
+  if(key=='+') audio.muteAmbient();
+  else if(key=='#') audio.muteSound();
+  else if(key=='-') audio.play("sound", "cena", true, false);
+  
   if (game.stage==-1) {;
     
     if(key==TAB) {

@@ -7,11 +7,16 @@ void setup() {
   //fullScreen();
   rectMode(RADIUS);
   textAlign(CENTER, CENTER);
+  
+  minim = new Minim(this);
+  audio = new AudioManager();
   setup_vars();
 }
 
 
 void draw() {
+  audio.mixAmbient();
+  
   switch(game.stage) {
     case -1:     pregame(); break;
     case  5:     credits(); break;
