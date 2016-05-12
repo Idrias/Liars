@@ -18,15 +18,13 @@ import java.io.IOException;
 public class liars_client extends PApplet {
 
 //
-static String CLIENT_VERSION = "0.9.5";
+static String CLIENT_VERSION = "1.0.0";
 //
 
 public void setup() {
   
-  //fullScreen();
   rectMode(RADIUS);
   textAlign(CENTER, CENTER);
-  
   minim = new Minim(this);
   audio = new AudioManager();
   setup_vars();
@@ -711,13 +709,13 @@ class Bomber {
 class AudioManager {
   boolean mutedAmbient = false;
   boolean mutedSound = false;
-  ArrayList<Referencedplayer> players;
+  ArrayList<ReferencedPlayer> players;
   ArrayList<AudioPlayer> playingAmbient;
   ArrayList<AudioPlayer> playingSound;
   String ambient = "";
 
   AudioManager() {
-    players = new ArrayList<Referencedplayer>();
+    players = new ArrayList<ReferencedPlayer>();
     playingSound = new ArrayList<AudioPlayer>();
     playingAmbient = new ArrayList<AudioPlayer>();
     setup_players();
@@ -745,14 +743,26 @@ class AudioManager {
       ambient = "waiting";
       stopAll("ambient");
       play("ambient", "saloon", true, true);
+    } else if (game.stage == 3 && !ambient.equals("playing")) {
+      ambient = "playing";
+      stopAll("ambient");
+      play("sound", "start", true, false);
+    } else if (game.stage == 5 && !ambient.equals("credits")) {
+      ambient = "credits";
+      stopAll("ambient");
+      play("ambient", "credits", true, true);
     }
   }
 
   public void setup_players() {
-    players.add( new Referencedplayer("/ambient/piano.mp3", "ambient_piano") );
-    players.add( new Referencedplayer("/ambient/saloon.mp3", "ambient_saloon") );
-    players.add( new Referencedplayer("/fx/gunshot.wav", "sound_gunshot") );
-    players.add( new Referencedplayer("/fx/cena.mp3", "sound_cena") );
+    players.add( new ReferencedPlayer("/ambient/piano.mp3", "ambient_piano") );
+    players.add( new ReferencedPlayer("/ambient/saloon.mp3", "ambient_saloon") );
+    players.add( new ReferencedPlayer("/ambient/credits.mp3", "ambient_credits") );
+    players.add( new ReferencedPlayer("/fx/cena.mp3", "sound_cena") );
+    players.add( new ReferencedPlayer("/fx/reset.mp3", "sound_reset"));
+    players.add( new ReferencedPlayer("/fx/start.mp3", "sound_start"));
+    players.add( new ReferencedPlayer("/fx/set.mp3", "sound_set"));
+    players.add( new ReferencedPlayer("/fx/turn.mp3", "sound_turn"));
   }
 
   public void play(String sort, String what, boolean rewind, boolean loop) {
@@ -816,7 +826,7 @@ class AudioManager {
   }
 
   public AudioPlayer getByReference(String reference) {
-    for (Referencedplayer rs : players) {
+    for (ReferencedPlayer rs : players) {
       if (rs.reference.equals(reference))
         return rs.player;
     }
@@ -828,11 +838,11 @@ class AudioManager {
 
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
-class Referencedplayer {
+class ReferencedPlayer {
   AudioPlayer player;
   String reference;
 
-  Referencedplayer(String p_path, String p_reference) {
+  ReferencedPlayer(String p_path, String p_reference) {
     player = minim.loadFile("/assets/audio"+p_path);
     reference = p_reference;
   }
@@ -852,11 +862,13 @@ public void credits() {
   int ypos = height;
   
   for(String cS : creditroll) {
+    if(cS.length()>80) textSize(15);
     text(cS, width/2, ypos-yroll);
+    textSize(20);
     ypos+=25;
   }
   
-  if(yroll+75<height) yroll+=0.5f;
+   yroll+=0.3f;
   if(millis()-starttime > 400 && (mousePressed || keyPressed)) {game.stage = -1; starttime=0; yroll = 0;}
 }
 
@@ -869,15 +881,82 @@ public void setup_creditroll() {
   creditroll.add("Game Logic - Rouven Grenz");
   creditroll.add("Networking - Rouven Grenz");
   creditroll.add("Graphical Interface - Rouven Grenz");
+  creditroll.add("Sound System - Rouven Grenz");
+  creditroll.add("       ");
   creditroll.add("       ");
   creditroll.add("Testing");
   creditroll.add("Test coordination - Rouven Grenz");
-  creditroll.add("Tester - Lukas Marquetant");
-  creditroll.add("Tester - Oliver Arndt");
+  creditroll.add("Alpha Tester - Lukas Marquetant");
+  creditroll.add("Alpha Tester - Oliver Arndt");
+  creditroll.add("Tester - Fabian Brendli");
+  creditroll.add("Tester - Dustin Evers");
+  creditroll.add("Tester - Jan Sch\u00f6ppe");
+  creditroll.add("Tester - Tim Seifert");
   creditroll.add("       ");
-  creditroll.add("Art, SoundFX & Music");
-  creditroll.add("For additional credit");
-  creditroll.add("view the readme doc");
+  creditroll.add("       ");
+  creditroll.add("Art");
+  creditroll.add("Saloon background");
+  creditroll.add("http://cdn.wccftech.com/wp-content/uploads/2015/04/Unreal-Engine-4-Saloon-1.png");
+  creditroll.add("       ");
+  creditroll.add("Wooden background");
+  creditroll.add("http://www.holz-gmeiner.com/images/stories/Produkte/Eiche_Natur.jpg");
+  creditroll.add("       ");
+  creditroll.add("Disconnected background");
+  creditroll.add("http://7-themes.com/data_images/out/74/7025025-disconnected.jpg");
+  creditroll.add("       ");
+  creditroll.add("Freddy Easter Egg");
+  creditroll.add("https://i.ytimg.com/vi/Wy_GUZs0Jzc/maxresdefault.jpg");
+  creditroll.add("       ");
+  creditroll.add("Card assets");
+  creditroll.add("https://images.gutefrage.net/media/fragen-antworten/bilder/5007241/0_original.jpg?v=1245315359000");
+  creditroll.add("       ");
+  creditroll.add("Card back");
+  creditroll.add("http://siriusbow.com/resources/400_F_54264304_KnKhcQpyBWGjo9hMGcHYtyDakzXKaNVk.jpg");
+  creditroll.add("       ");
+  creditroll.add("Paste Icon");
+  creditroll.add("https://www.iconfinder.com/icons/27862/download/png/256");
+  creditroll.add("       ");
+  creditroll.add("Server Freddy normal");
+  creditroll.add("https://lh4.googleusercontent.com/-1DwXNc9iZUk/AAAAAAAAAAI/AAAAAAAAABE/aIFcYE8bl-M/photo.jpg");
+  creditroll.add("       ");
+  creditroll.add("Server Freddy spooky");
+  creditroll.add("http://vignette4.wikia.nocookie.net/freddy-fazbears-pizza/images/6/61/FNaF4Mobile.jpg/revision/latest?cb=20150808001857");
+  creditroll.add("       ");
+  creditroll.add("Bomber easter egg");
+  creditroll.add("https://s-media-cache-ak0.pinimg.com/736x/4b/76/b9/4b76b946f938093762311572f794e0c3.jpg");
+  creditroll.add("       ");
+  creditroll.add("       ");
+  creditroll.add("Music & Sounds");
+  creditroll.add("Menu piano");
+  creditroll.add("https://www.jamendo.com/album/116640/cinematic-western-wild-west-cowboy-soundtrack-instrumental-album");
+  creditroll.add("       ");
+  creditroll.add("Waiting state song");
+  creditroll.add("http://freemusicarchive.org/music/Smurd/rORRET_tENALP/03_Saloon");
+  creditroll.add("       ");
+  creditroll.add("Credits song");
+  creditroll.add("https://www.freesound.org/people/joshuaempyre/sounds/250856/");
+  creditroll.add("       ");
+  creditroll.add("Round startup sound");
+  creditroll.add("https://www.freesound.org/people/plasterbrain/sounds/243020/");
+  creditroll.add("       ");
+  creditroll.add("Round reset sound");
+  creditroll.add("https://www.freesound.org/people/Corsica_S/sounds/107546/");
+  creditroll.add("       ");
+  creditroll.add("Set card sound");
+  creditroll.add("https://www.freesound.org/people/fins/sounds/171521/");
+  creditroll.add("       ");
+  creditroll.add("Your turn sound");
+  creditroll.add("https://www.freesound.org/people/satrebor/sounds/113218/");
+  creditroll.add("       ");
+  creditroll.add("       ");
+  creditroll.add("You can also view the credits");
+  creditroll.add("in the readme file.");
+  creditroll.add("       ");
+  creditroll.add("       ");
+  creditroll.add("       ");
+  creditroll.add("--");
+  creditroll.add("Istud, quod tu summum putas, gradus est.");
+  creditroll.add("--");
   creditroll.add("       ");
   creditroll.add("MMXVI");
   creditroll.add("---------|||---------");
@@ -1042,19 +1121,19 @@ class Network {
 
   public void execute(String command, String tag1, String tag2) {
     if      (command.equals("+p"+game.playerid))                                  {game.board.sta_player.add(new Card(tag1, tag2, false)); /*println("Now we have", game.board.sta_player.size(), "cards");*/}
-    else if (command.equals("+gst"))                                              game.board.sta_game.add(new Card(tag1, tag2, true));
+    else if (command.equals("+gst"))                                              {game.board.sta_game.add(new Card(tag1, tag2, true)); audio.play("sound", "set", true, false);}
     else if (command.equals("+msg"))                                              game.board.msgs.add(tag1+tag2);
     else if (command.equals("+npl") && game.playerid.equals("999"))               game.playerid = tag1; 
     else if (command.equals("-pst") && tag1.equals("all") && tag2.equals("all"))  game.board.sta_player = new ArrayList<Card>();
     else if (command.equals("-gst") && tag1.equals("all") && tag2.equals("all"))  game.board.sta_game = new ArrayList<Card>();
-    else if (command.equals("+nsa")) game.stage = PApplet.parseInt(tag2);
-    else if (command.equals("+dsp") && tag1.equals(game.playerid))                {game.myTurn = true; game.firstTurn = true; par = new PlayAsRequest();}
+    else if (command.equals("+nsa"))                                              game.stage = PApplet.parseInt(tag2);
+    else if (command.equals("+dsp") && tag1.equals(game.playerid))                {game.myTurn = true; game.firstTurn = true; par = new PlayAsRequest(); audio.play("sound", "turn", true, false);}
     else if (command.equals("+dsp") && !tag1.equals(game.playerid))               game.board.playingas = "null";
-    else if (command.equals("+npt") && tag1.equals(game.playerid))                {game.myTurn = true; game.firstTurn = false;} 
+    else if (command.equals("+npt") && tag1.equals(game.playerid))                {game.myTurn = true; game.firstTurn = false; audio.play("sound", "turn", true, false);} 
     else if (command.equals("+paa"))                                              game.board.playingas = tag1;
     else if (command.equals("+tsc"))                                              {Card card = new Card(tag1, tag2, true); for(int i=0; i<game.board.sta_game.size(); i++) {if(game.board.sta_game.get(i).farbe.equals(tag1) && game.board.sta_game.get(i).id.equals(tag2)) {game.board.sta_game.remove(i); i=-1;}} card.hidden=false; game.board.sta_game.add(card);}
     else if (command.equals("+con"))                                              {game.board.playingas="null";}  
-    else if (command.equals("+res") && tag1.equals("ALL") && tag2.equals("ALL"))  {println("here"); String id = game.playerid; game = new Game(); game.playerid = id;}
+    else if (command.equals("+res") && tag1.equals("ALL") && tag2.equals("ALL"))  {println("here"); String id = game.playerid; game = new Game(); game.playerid = id; audio.play("sound", "reset", true, false);}
     else if (command.equals("+fre") && tag1.equals("+"))                          {game.board.load_background("fnaf.jpg");}
     else if (command.equals("+fre") && tag1.equals("-"))                          {game.board.load_background("board.jpg");}
     else if (command.equals("+npi") && tag1.equals(game.playerid))                {game.playerid = tag2;}

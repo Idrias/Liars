@@ -648,13 +648,13 @@ class Bomber {
 class AudioManager {
   boolean mutedAmbient = false;
   boolean mutedSound = false;
-  ArrayList<Referencedplayer> players;
+  ArrayList<ReferencedPlayer> players;
   ArrayList<AudioPlayer> playingAmbient;
   ArrayList<AudioPlayer> playingSound;
   String ambient = "";
 
   AudioManager() {
-    players = new ArrayList<Referencedplayer>();
+    players = new ArrayList<ReferencedPlayer>();
     playingSound = new ArrayList<AudioPlayer>();
     playingAmbient = new ArrayList<AudioPlayer>();
     setup_players();
@@ -682,14 +682,26 @@ class AudioManager {
       ambient = "waiting";
       stopAll("ambient");
       play("ambient", "saloon", true, true);
+    } else if (game.stage == 3 && !ambient.equals("playing")) {
+      ambient = "playing";
+      stopAll("ambient");
+      play("sound", "start", true, false);
+    } else if (game.stage == 5 && !ambient.equals("credits")) {
+      ambient = "credits";
+      stopAll("ambient");
+      play("ambient", "credits", true, true);
     }
   }
 
   void setup_players() {
-    players.add( new Referencedplayer("/ambient/piano.mp3", "ambient_piano") );
-    players.add( new Referencedplayer("/ambient/saloon.mp3", "ambient_saloon") );
-    players.add( new Referencedplayer("/fx/gunshot.wav", "sound_gunshot") );
-    players.add( new Referencedplayer("/fx/cena.mp3", "sound_cena") );
+    players.add( new ReferencedPlayer("/ambient/piano.mp3", "ambient_piano") );
+    players.add( new ReferencedPlayer("/ambient/saloon.mp3", "ambient_saloon") );
+    players.add( new ReferencedPlayer("/ambient/credits.mp3", "ambient_credits") );
+    players.add( new ReferencedPlayer("/fx/cena.mp3", "sound_cena") );
+    players.add( new ReferencedPlayer("/fx/reset.mp3", "sound_reset"));
+    players.add( new ReferencedPlayer("/fx/start.mp3", "sound_start"));
+    players.add( new ReferencedPlayer("/fx/set.mp3", "sound_set"));
+    players.add( new ReferencedPlayer("/fx/turn.mp3", "sound_turn"));
   }
 
   void play(String sort, String what, boolean rewind, boolean loop) {
@@ -753,7 +765,7 @@ class AudioManager {
   }
 
   AudioPlayer getByReference(String reference) {
-    for (Referencedplayer rs : players) {
+    for (ReferencedPlayer rs : players) {
       if (rs.reference.equals(reference))
         return rs.player;
     }
@@ -765,11 +777,11 @@ class AudioManager {
 
 ////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////
-class Referencedplayer {
+class ReferencedPlayer {
   AudioPlayer player;
   String reference;
 
-  Referencedplayer(String p_path, String p_reference) {
+  ReferencedPlayer(String p_path, String p_reference) {
     player = minim.loadFile("/assets/audio"+p_path);
     reference = p_reference;
   }

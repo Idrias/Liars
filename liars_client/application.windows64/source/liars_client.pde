@@ -1,13 +1,11 @@
 //
-static String CLIENT_VERSION = "0.9.5";
+static String CLIENT_VERSION = "1.0.0";
 //
 
 void setup() {
   size(1000, 600);
-  //fullScreen();
   rectMode(RADIUS);
   textAlign(CENTER, CENTER);
-  
   minim = new Minim(this);
   audio = new AudioManager();
   setup_vars();
